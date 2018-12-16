@@ -1,9 +1,9 @@
 <?php 
 	$penalidade_gap = -1;   // Gap Penalty
-	$pontuacao_match = 1;         // Match Score
+	$pontuacao_match = 1;   // Match Score
 	$incompatibilidade = 0; // Mismatch Score
-	$sequencia1 = "GTG";
-	$sequencia2 = "GTG";
+	$sequencia1 = "GTGACCA ";
+	$sequencia2 = "AACAACC ";
 	$alinhamentoA = "";
 	$alinhamentoB = "";
 	$matriz = array();
@@ -16,10 +16,10 @@
 		}
 	}
 	
-	for($i = 0; $i < strlen($sequencia1)-1; $i++) {
+	for($i = 0; $i < strlen($sequencia1); $i++) {
 		$matriz[$i+1][0] = ($i+1) * $penalidade_gap;
 	}
-	for($j = 0; $j < strlen($sequencia2)-1; $j++) {
+	for($j = 0; $j < strlen($sequencia2); $j++) {
 		$matriz[0][$j+1] = ($j+1) * $penalidade_gap;
 	}
 	
@@ -30,18 +30,16 @@
 			$escolha2 = $matriz[$i-1][$j] + $penalidade_gap;
 			$escolha3 = $matriz[$i][$j-1] + $penalidade_gap;
 			$matriz[$i][$j] = max($escolha1, $escolha2, $escolha3);
-			echo $matriz[$i][$j];
 		}
-		echo "<html><br /></html>";
 	}
 	/***********************************************************************/
-	$i = strlen($sequencia1);
-	$j = strlen($sequencia2);
+	$i = strlen($sequencia1)-1;
+	$j = strlen($sequencia2)-1;
 	
 	$alinhamento_otimo['sequencia1'] = array();
 	$alinhamento_otimo['sequencia2'] = array();
 	$alinhamento_otimo['aln'] = array();
-	$alinhamento_otimo['score'] = $matriz[$i][$j];
+	$alinhamento_otimo['score'] = $matriz[$i][$j]-1;
 
 	while($i > 0 && $j > 0){
 		$score = $matriz[$i][$j];
@@ -56,7 +54,6 @@
 			$alinhamento_otimo['aln'][] = ($sequencia1 === $sequencia2) ? '|' : ' ';
 			$i--;
 			$j--;
-			echo $sequencia1[$i-1];
 		}
 		else if($score == ($scoreLeft + $penalidade_gap)){
 			$alinhamento_otimo['sequencia1'][] = $sequencia1[$i-1];
@@ -70,8 +67,15 @@
 			$alinhamento_otimo['aln'][] = ' ';
 			$j--;
 		}
+		else {
+            die("Ponteiro Inválido: $i,$j");
+        }
 	}
-	/*
+	
+	foreach(array('sequencia1', 'sequencia2', 'aln') as $k) {
+		$alinhamento_otimo[$k] = array_reverse($alinhamento_otimo[$k]);
+	}
+	
 	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
 	echo '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head>';
 	echo '<meta http-equiv="content-type" content="text/html;charset=utf-8" />';
@@ -80,11 +84,11 @@
 	echo '<title>Needleman-Wunsch Alignment Score Table</title>';
 	echo '</head>';
 	echo '<body>';
-	echo '<h3>Optimal Global Alignment (score = '.$this->optimal_alignment['score'].')</h3>';
+	echo '<h3>Optimal Global Alignment (score = '.$alinhamento_otimo['score'].')</h3>';
 	echo '<table class="align">';
-	foreach(array('seq2', 'aln', 'seq1') as $k) {
+	foreach(array('sequencia2', 'aln', 'sequencia1') as $k) {
 		echo '<tr>';
-		foreach($this->optimal_alignment[$k] as $v) {
+		foreach($alinhamento_otimo[$k] as $v) {
 			echo "<td>$v</td>";
 		}
 		echo '</tr>';
@@ -92,6 +96,4 @@
 	echo "\n</table>";
 
 	echo '</body></html>';
-	*/
-	
 ?>
