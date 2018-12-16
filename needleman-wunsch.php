@@ -39,7 +39,7 @@
 	$alinhamento_otimo['sequencia1'] = array();
 	$alinhamento_otimo['sequencia2'] = array();
 	$alinhamento_otimo['aln'] = array();
-	$alinhamento_otimo['score'] = $matriz[$i][$j]-1;
+	$alinhamento_otimo['score'] = $matriz[$i][$j];
 
 	while($i > 0 && $j > 0){
 		$score = $matriz[$i][$j];
@@ -51,7 +51,7 @@
 		if($score == $scoreDiag + $pon_inc){
 			$alinhamento_otimo['sequencia1'][] = $sequencia1[$i-1];
 			$alinhamento_otimo['sequencia2'][] = $sequencia2[$j-1];
-			$alinhamento_otimo['aln'][] = ($sequencia1 === $sequencia2) ? '|' : ' ';
+			$alinhamento_otimo['aln'][] = ($sequencia1[$i-1] === $sequencia2[$j-1]) ? '|' : ' ';
 			$i--;
 			$j--;
 		}
